@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", // Transpilar para a versão mais recente do JS
+    "module": "CommonJS", // Usar módulos CommonJS (compatível com Node.js)
+    "rootDir": "src", // Diretório principal dos arquivos TypeScript
+    "outDir": "dist", // Diretório onde os arquivos compilados serão gerados
+    "strict": true, // Ativar verificações estritas de tipo
+    "esModuleInterop": true, // Compatibilidade com importações do CommonJS
+    "skipLibCheck": true // Ignorar verificação de bibliotecas
+  },
+  "include": [
+    "src"
+  ], // Incluir apenas arquivos da pasta src
+  "exclude": [
+    "node_modules"
+  ] // Ignorar a pasta node_modules
+}
