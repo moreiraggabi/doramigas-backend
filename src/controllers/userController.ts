@@ -37,8 +37,9 @@ export const loginUserHandler = async (req: Request, res: Response) => {
 
     if (err instanceof IncorrectPasswordException) {
       res.status(500).json({ errors: "A senha informada está incorreta" });
+    } else {
+      res.status(500).json({ errors: "Erro ao realizar login" });
     }
-    res.status(500).json({ errors: "Erro ao realizar login" });
   }
 };
 
