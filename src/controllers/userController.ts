@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
 import pool from "../db";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 // Lógica para registrar uma usuária
