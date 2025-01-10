@@ -1,14 +1,39 @@
 import { Request, Response } from "express";
-import pool from "../db";
-import { createDrama } from "../services/dramaService";
+import {
+  createDrama,
+  deleteDrama,
+  editDrama,
+  getDramasById,
+  listDramas,
+} from "../services/dramaService";
+import { idRequired } from "../utils/errorMessages";
 
 export const createDramaHandler = async (req: Request, res: Response) => {
-  return createDrama(req, res);
+  const { name, synopsis, genre, nationality, platform } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: "O nome do dorama é obrigatório" });
+  }
+
+  try {
+    const result = await createDrama({
+      name,
+      synopsis,
+      genre,
+      nationality,
+      platform,
+    });
+
+    return res.status(201).json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao cadastrar dorama." });
+  }
 };
 
-export const listDramasHandler = async (req: Request, res: Response) => {
+export const listDramasHandler = async (res: Response) => {
   try {
-    const result = await pool.query("SELECT * FROM dramas", []);
+    const result = await listDramas();
 
     return res.status(201).json(result);
   } catch (err) {
@@ -20,32 +45,60 @@ export const listDramasHandler = async (req: Request, res: Response) => {
 };
 
 export const getDramaByIdHandler = async (req: Request, res: Response) => {
-  const { id } = req.body;
+  const { id } = req.params;
 
   if (!id) {
-    return res.status(400).json({ error: "É obrigatório informar um id" });
+    return res.status(400).json({ error: idRequired });
   }
 
   try {
-    const result = await pool.query("SELECT * FROM dramas WHERE = $1", [id]);
+    const result = await getDramasById(+id);
 
-    return res.status(201).json(result.rows[0]);
+    if (!result) {
+      return res.status(404).json({ error: "Dorama não encontrado." });
+    }
+
+    return res.status(201).json(result);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Erro ao buscar doramas" });
   }
 };
 
-// export const editDramaHandler = async (req: Request, res: Response) => {
-//     const {id, name, synopsis, genre, nationality, platform } = req.body;
+export const editDramaHandler = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, synopsis, genre, nationality, platform } = req.body;
 
-//     if (!id) {
-//         return res.status(400).json({error: 'É obrigatório informar o id do drama editado'});
-//     }
+  if (!id) {
+    res.status(400).json({ error: idRequired });
+  }
 
-//     try {
-//         const result = await pool.query(
-//             ''
-//         )
-//     }
-// }
+  try {
+    const updatedDrama = await editDrama(+id, {
+      name,
+      synopsis,
+      genre,
+      nationality,
+      platform,
+    });
+
+    res.status(200).json({ updatedDrama });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ error: "Ocorreu um erro ao editar o dorama" });
+  }
+};
+
+export const deleteDramaHandler = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ error: idRequired });
+  }
+
+  const deletedDrama = await deleteDrama(+id);
+
+  res.status(200).json({ deletedDrama });
+};

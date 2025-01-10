@@ -1,22 +1,62 @@
-import { Request, Response } from "express";
-import pool from "../db";
+import prisma from "../prisma";
+import { CreateDramaParams } from "../interfaces/dramaInterface";
 
-export const createDrama = async (req: Request, res: Response) => {
-  const { name, synopsis, genre, nationality, platform } = req.body;
+export const createDrama = async ({
+  name,
+  synopsis,
+  genre,
+  nationality,
+  platform,
+}: CreateDramaParams) => {
+  const result = await prisma.dramas.create({
+    data: {
+      name,
+      synopsis,
+      genre,
+      nationality,
+      platform,
+    },
+  });
 
-  if (!name) {
-    return res.status(400).json({ error: "O nome do dorama é obrigatório" });
-  }
-
-  try {
-    const result = await pool.query(
-      "INSERT INTO dramas (name, synopsis, genre, nationality, platform) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [name, synopsis, genre, nationality, platform]
-    );
-
-    return res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Erro ao cadastrar dorama." });
-  }
+  return result;
 };
+
+export const listDramas = async () => {
+  const result = await prisma.dramas.findMany();
+
+  return result;
+};
+
+export const getDramasById = async (id: number) => {
+  const result = await prisma.dramas.findUnique({
+    where: { id },
+  });
+
+  return result;
+};
+
+export const editDrama = async (
+  id: number,
+  { name, synopsis, genre, nationality, platform }: Partial<CreateDramaParams>
+) => {
+  const result = await prisma.dramas.update({
+    where: { id },
+    data: {
+      name,
+      synopsis,
+      genre,
+      nationality,
+      platform,
+    },
+  });
+
+  return result;
+};
+
+export const deleteDrama = async (id: number) => {
+  const result = await prisma.dramas.delete({
+    where: { id }
+  });
+
+  return result;
+}

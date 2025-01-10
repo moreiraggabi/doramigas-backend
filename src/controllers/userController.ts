@@ -1,34 +1,24 @@
 import { Request, Response } from "express";
-import pool from "../db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { extingUser, createUser, editUser } from "../services/userService";
+import { encriptPassword } from "../helpers/usersHelper";
 
 // Lógica para registrar uma usuária
-export const registerUser = async (req: Request, res: Response) => {
+export const createUserHandler = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   try {
-    // Verificar se o email já existe no banco
-    const existingUser = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
-    if (existingUser.rows.length > 0) {
+    const existingUser = await extingUser(email);
+    if (existingUser) {
       return res.status(400).json({ error: "Email já está em uso." });
     }
 
-    // Hash da senhx
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await encriptPassword(password);
 
-    // Inserir a nova usuária no banco
-    const result = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, created_at",
-      [name, email, hashedPassword]
-    );
+    const result = await createUser({ name, email, password: hashedPassword });
 
-    // Responder com os dados da usuária criada
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao registrar a usuária." });
@@ -36,22 +26,20 @@ export const registerUser = async (req: Request, res: Response) => {
 };
 
 // Lógica de login
-export const loginUsser = async (req: Request, res: Response) => {
+export const loginUsserHandler = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
     //Verificar se o emial existe
-    const userResult = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "Email não encontrado." });
+    const userResult = await extingUser(email);
+    if (!userResult) {
+      return res.status(404).json({
+        error: "Nenhum usuário cadastrado com esse e-mail foi encontrado.",
+      });
     }
 
-    const user = userResult.rows[0];
+    const user = userResult;
 
-    //Comparar a senha fornecida com o hash armazenado
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res
@@ -70,5 +58,31 @@ export const loginUsser = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ errors: "Erro ao realizar login" });
+  }
+};
+
+export const editUserHandler = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, email, password } = req.body;
+
+  try {
+    const existingUser = await extingUser(email);
+
+    if (existingUser) {
+      res.status(400).json({ error: "O e-mail informado já está em uso." });
+    }
+
+    const hashedPassword = await encriptPassword(password);
+
+    const editedUser = await editUser(+id, {
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    return res.status(200).json({ editedUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro ao editar usuário" });
   }
 };

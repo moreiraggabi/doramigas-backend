@@ -1,0 +1,1 @@
+export const idRequired = 'É obrigatório informar um id.'
