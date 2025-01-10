@@ -1,1 +1,3 @@
-export const idRequired = 'É obrigatório informar um id.'
+export const errorMessages = {
+  idRequired: "É obrigatório informar um id",
+};

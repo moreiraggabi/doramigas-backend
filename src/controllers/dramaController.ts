@@ -6,7 +6,7 @@ import {
   getDramasById,
   listDramas,
 } from "../services/dramaService";
-import { idRequired } from "../utils/errorMessages";
+import { errorMessages } from "../utils/errorMessages";
 
 export const createDramaHandler = async (req: Request, res: Response) => {
   const { name, synopsis, genre, nationality, platform } = req.body;
@@ -31,11 +31,11 @@ export const createDramaHandler = async (req: Request, res: Response) => {
   }
 };
 
-export const listDramasHandler = async (res: Response) => {
+export const listDramasHandler = async (req: Request, res: Response) => {
   try {
     const result = await listDramas();
 
-    return res.status(201).json(result);
+    return res.status(200).json(result);
   } catch (err) {
     console.error(err);
     return res
@@ -48,7 +48,7 @@ export const getDramaByIdHandler = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!id) {
-    return res.status(400).json({ error: idRequired });
+    return res.status(400).json({ error: errorMessages.idRequired });
   }
 
   try {
@@ -58,7 +58,7 @@ export const getDramaByIdHandler = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Dorama não encontrado." });
     }
 
-    return res.status(201).json(result);
+    return res.status(200).json(result);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Erro ao buscar doramas" });
@@ -70,7 +70,7 @@ export const editDramaHandler = async (req: Request, res: Response) => {
   const { name, synopsis, genre, nationality, platform } = req.body;
 
   if (!id) {
-    res.status(400).json({ error: idRequired });
+    res.status(400).json({ error: errorMessages.idRequired });
   }
 
   try {
@@ -95,7 +95,7 @@ export const deleteDramaHandler = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: idRequired });
+    res.status(400).json({ error: errorMessages.idRequired });
   }
 
   const deletedDrama = await deleteDrama(+id);
