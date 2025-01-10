@@ -1,29 +1,12 @@
 import { Request, Response } from "express";
 import pool from "../db";
+import { createDrama } from "../services/dramaService";
 
-export const createDrama = async (req: Request, res: Response, next: any) => {
-  const { name, synopsis, genre, nationality, platform } = req.body;
-
-  if (!name) {
-    return res.status(400).json({ error: "O nome do dorama é obrigatório" });
-  }
-
-  try {
-    const result = await pool.query(
-      "INSERT INTO dramas (name, synopsis, genre, nationality, platform) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [name, synopsis, genre, nationality, platform]
-    );
-
-    return res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Erro ao cadastrar dorama." });
-  }
-
-  return next();
+export const createDramaHandler = async (req: Request, res: Response) => {
+  return createDrama(req, res);
 };
 
-export const listDramas = async (req: Request, res: Response, next: any) => {
+export const listDramasHandler = async (req: Request, res: Response) => {
   try {
     const result = await pool.query("SELECT * FROM dramas", []);
 
@@ -34,11 +17,9 @@ export const listDramas = async (req: Request, res: Response, next: any) => {
       .status(500)
       .json({ error: "Não foi possível buscar os doramas." });
   }
-
-  return next();
 };
 
-export const getDramaByIdd = async (req: Request, res: Response, next: any) => {
+export const getDramaByIdHandler = async (req: Request, res: Response) => {
   const { id } = req.body;
 
   if (!id) {
@@ -53,11 +34,9 @@ export const getDramaByIdd = async (req: Request, res: Response, next: any) => {
     console.error(err);
     return res.status(500).json({ error: "Erro ao buscar doramas" });
   }
-
-  return next();
 };
 
-// export const editDrama = async (req: Request, res: Response) => {
+// export const editDramaHandler = async (req: Request, res: Response) => {
 //     const {id, name, synopsis, genre, nationality, platform } = req.body;
 
 //     if (!id) {

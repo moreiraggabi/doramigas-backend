@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 // Lógica para registrar uma usuária
-export const registerUser = async (req: Request, res: Response, next: any) => {
+export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   try {
@@ -17,7 +17,7 @@ export const registerUser = async (req: Request, res: Response, next: any) => {
       return res.status(400).json({ error: "Email já está em uso." });
     }
 
-    // Hash da senha
+    // Hash da senhx
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -33,12 +33,10 @@ export const registerUser = async (req: Request, res: Response, next: any) => {
     console.error(err);
     res.status(500).json({ error: "Erro ao registrar a usuária." });
   }
-
-  return next();
 };
 
 // Lógica de login
-export const loginUsser = async (req: Request, res: Response, next: any) => {
+export const loginUsser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -73,6 +71,4 @@ export const loginUsser = async (req: Request, res: Response, next: any) => {
     console.error(err);
     res.status(500).json({ errors: "Erro ao realizar login" });
   }
-
-  return next();
 };
