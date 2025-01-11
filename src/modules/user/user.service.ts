@@ -1,15 +1,15 @@
 import {
   IncorrectPasswordException,
   UserNotFoundException,
-} from '../exceptions/userExcepetions';
-import { encriptPassword } from '../helpers/usersHelper';
-import { CreateUserParams } from '../interfaces/users.interface';
+} from './user.excepetions';
+import { encriptPassword } from './users.helper';
+import { CreateUserParams } from './users.interface';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import prisma from '../prisma';
+import prisma from '../../prisma';
 
 export const extingUser = async (email: string) => {
-  const extingUser = await prisma.users.findUnique({
+  const extingUser = await prisma.user.findUnique({
     where: { email },
   });
 
@@ -28,7 +28,7 @@ export const createUser = async ({
 
   const hashedPassword = await encriptPassword(password);
 
-  const result = await prisma.users.create({
+  const result = await prisma.user.create({
     data: {
       name,
       email,
@@ -66,7 +66,7 @@ export const editUser = async (
   id: number,
   { name, email, password }: CreateUserParams,
 ) => {
-  const idExist = await prisma.users.findUnique({
+  const idExist = await prisma.user.findUnique({
     select: { id: true },
     where: { id },
   });
@@ -82,7 +82,7 @@ export const editUser = async (
 
   const hashedPassword = await encriptPassword(password);
 
-  const result = await prisma.users.update({
+  const result = await prisma.user.update({
     where: { id },
     data: {
       name,

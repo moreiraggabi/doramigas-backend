@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest } from '../custom';
+import { AuthenticatedRequest } from '../../custom';
 
 interface TokenPayload {
   id: number;

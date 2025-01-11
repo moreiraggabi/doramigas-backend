@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import userRoutes from './routes/user.routes';
-import dramaRoutes from './routes/dramas.routes';
+import userRoutes from './modules/user/user.routes';
+import dramaRoutes from './modules/drama/dramas.routes';
 
 dotenv.config();
 

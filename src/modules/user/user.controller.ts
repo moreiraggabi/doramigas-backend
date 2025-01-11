@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { createUser, editUser, loginUser } from '../services/user.service';
+import { createUser, editUser, loginUser } from './user.service';
 import {
   IncorrectPasswordException,
   UserNotFoundException,
-} from '../exceptions/userExcepetions';
+} from './user.excepetions';
 
 // Lógica para registrar uma usuária
 export const createUserHandler = async (req: Request, res: Response) => {

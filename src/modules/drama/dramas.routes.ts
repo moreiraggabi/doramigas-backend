@@ -5,7 +5,7 @@ import {
   getDramaByIdHandler,
   editDramaHandler,
   deleteDramaHandler,
-} from '../controllers/drama.controller';
+} from './drama.controller';
 
 const router = Router();
 

@@ -5,8 +5,8 @@ import {
   editDrama,
   getDramasById,
   listDramas,
-} from '../services/drama.service';
-import { errorMessages } from '../utils/errorMessages';
+} from './drama.service';
+import { errorMessages } from '../../utils/errorMessages';
 
 export const createDramaHandler = async (req: Request, res: Response) => {
   const { name, synopsis, genre, nationality, platform } = req.body;
