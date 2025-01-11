@@ -1,5 +1,5 @@
-import prisma from "../prisma";
-import { CreateDramaParams } from "../interfaces/dramaInterface";
+import prisma from '../prisma';
+import { CreateDramaParams } from '../interfaces/drama.interface';
 
 export const createDrama = async ({
   name,
@@ -37,7 +37,7 @@ export const getDramasById = async (id: number) => {
 
 export const editDrama = async (
   id: number,
-  { name, synopsis, genre, nationality, platform }: Partial<CreateDramaParams>
+  { name, synopsis, genre, nationality, platform }: Partial<CreateDramaParams>,
 ) => {
   const result = await prisma.dramas.update({
     where: { id },
@@ -55,8 +55,8 @@ export const editDrama = async (
 
 export const deleteDrama = async (id: number) => {
   const result = await prisma.dramas.delete({
-    where: { id }
+    where: { id },
   });
 
   return result;
-}
+};

@@ -1,18 +1,18 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import {
   createDrama,
   deleteDrama,
   editDrama,
   getDramasById,
   listDramas,
-} from "../services/dramaService";
-import { errorMessages } from "../utils/errorMessages";
+} from '../services/drama.service';
+import { errorMessages } from '../utils/errorMessages';
 
 export const createDramaHandler = async (req: Request, res: Response) => {
   const { name, synopsis, genre, nationality, platform } = req.body;
 
   if (!name) {
-    return res.status(400).json({ error: "O nome do dorama é obrigatório" });
+    return res.status(400).json({ error: 'O nome do dorama é obrigatório' });
   }
 
   try {
@@ -27,7 +27,7 @@ export const createDramaHandler = async (req: Request, res: Response) => {
     return res.status(201).json(result);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Erro ao cadastrar dorama." });
+    return res.status(500).json({ error: 'Erro ao cadastrar dorama.' });
   }
 };
 
@@ -40,7 +40,7 @@ export const listDramasHandler = async (req: Request, res: Response) => {
     console.error(err);
     return res
       .status(500)
-      .json({ error: "Não foi possível buscar os doramas." });
+      .json({ error: 'Não foi possível buscar os doramas.' });
   }
 };
 
@@ -55,13 +55,13 @@ export const getDramaByIdHandler = async (req: Request, res: Response) => {
     const result = await getDramasById(+id);
 
     if (!result) {
-      return res.status(404).json({ error: "Dorama não encontrado." });
+      return res.status(404).json({ error: 'Dorama não encontrado.' });
     }
 
     return res.status(200).json(result);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Erro ao buscar doramas" });
+    return res.status(500).json({ error: 'Erro ao buscar doramas' });
   }
 };
 
@@ -87,7 +87,7 @@ export const editDramaHandler = async (req: Request, res: Response) => {
     console.error(err);
     return res
       .status(500)
-      .json({ error: "Ocorreu um erro ao editar o dorama" });
+      .json({ error: 'Ocorreu um erro ao editar o dorama' });
   }
 };
 

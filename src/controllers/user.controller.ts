@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { createUser, editUser, loginUser } from "../services/userService";
+import { Request, Response } from 'express';
+import { createUser, editUser, loginUser } from '../services/user.service';
 import {
   IncorrectPasswordException,
   UserNotFoundException,
-} from "../exceptions/userExcepetions";
+} from '../exceptions/userExcepetions';
 
 // Lógica para registrar uma usuária
 export const createUserHandler = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ export const createUserHandler = async (req: Request, res: Response) => {
     if (err instanceof UserNotFoundException) {
       res.status(404).json({ error: err.message });
     } else {
-      res.status(500).json({ error: "Erro ao criar usuário" });
+      res.status(500).json({ error: 'Erro ao criar usuário' });
     }
   }
 };
@@ -36,9 +36,9 @@ export const loginUserHandler = async (req: Request, res: Response) => {
     console.error(err);
 
     if (err instanceof IncorrectPasswordException) {
-      res.status(500).json({ errors: "A senha informada está incorreta" });
+      res.status(500).json({ errors: 'A senha informada está incorreta' });
     } else {
-      res.status(500).json({ errors: "Erro ao realizar login" });
+      res.status(500).json({ errors: 'Erro ao realizar login' });
     }
   }
 };
@@ -61,7 +61,7 @@ export const editUserHandler = async (req: Request, res: Response) => {
     if (err instanceof UserNotFoundException) {
       res.status(404).json({ error: err.message });
     } else {
-      res.status(500).json({ error: "Erro ao editar usuário" });
+      res.status(500).json({ error: 'Erro ao editar usuário' });
     }
   }
 };

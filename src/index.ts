@@ -1,10 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import userRoutes from './routes/userRoutes';
-import dramaRoutes from './routes/dramasRoutes'
+import userRoutes from './routes/user.routes';
+import dramaRoutes from './routes/dramas.routes';
 
-dotenv.config()
+dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,5 +15,5 @@ app.use('/api/dramas', dramaRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

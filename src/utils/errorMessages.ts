@@ -1,3 +1,3 @@
 export const errorMessages = {
-  idRequired: "É obrigatório informar um id",
+  idRequired: 'É obrigatório informar um id',
 };
