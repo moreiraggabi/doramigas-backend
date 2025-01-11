@@ -10,7 +10,7 @@ interface TokenPayload {
 export const authenticateToken = (req: AuthenticatedRequest, res: Response) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token não fornecido.' });
   }
 
@@ -19,7 +19,7 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response) => {
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'default_secret',
+      process.env.JWT_SECRET as string || 'default_secret',
     ) as TokenPayload;
 
     // Adiciona os dados do token no objeto `req`

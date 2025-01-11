@@ -22,8 +22,8 @@ export const createUser = async ({
   password,
 }: CreateUserParams) => {
   const userResult = await extingUser(email);
-  if (!userResult) {
-    throw new UserNotFoundException('E-mail não cadastrado');
+  if (userResult) {
+    throw new UserNotFoundException('O e-mail informado já está cadastrado');
   }
 
   const hashedPassword = await encriptPassword(password);
@@ -75,12 +75,17 @@ export const editUser = async (
     throw new UserNotFoundException('Id não encontrado');
   }
 
-  const emailExist = await extingUser(email);
-  if (emailExist) {
-    throw new UserNotFoundException('O e-mail informado já está em uso');
+  if (email) {
+    const emailExist = await extingUser(email);
+    if (emailExist) {
+      throw new UserNotFoundException('O e-mail informado já está em uso');
+    }
   }
 
-  const hashedPassword = await encriptPassword(password);
+  let hashedPassword;
+  if (password) {
+    hashedPassword = await encriptPassword(password);
+  }
 
   const result = await prisma.user.update({
     where: { id },
