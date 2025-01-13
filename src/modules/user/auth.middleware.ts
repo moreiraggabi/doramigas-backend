@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest } from '../../custom';
 
@@ -7,7 +7,7 @@ interface TokenPayload {
   email: string;
 }
 
-export const authenticateToken = (req: AuthenticatedRequest, res: Response) => {
+export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -24,8 +24,9 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response) => {
 
     // Adiciona os dados do token no objeto `req`
     req.user = { id: decoded.id, email: decoded.email };
+    next();
   } catch (err) {
     console.error(err);
-    return res.status(403).json({ error: 'Token inválido.' });
+    res.status(403).json({ error: 'Token inválido.' });
   }
 };

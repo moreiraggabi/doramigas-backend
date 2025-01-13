@@ -15,7 +15,7 @@ model Drama {
   nationality String?     @db.VarChar(50)
   platform    String?     @db.VarChar(100)
   created_at  DateTime?   @default(now()) @db.Timestamp(6)
-  userDramas  UserDrama[]
+  userDrama   UserDrama[]
 
   @@map("dramas")
 }
@@ -26,7 +26,7 @@ model User {
   email      String      @unique @db.VarChar(150)
   password   String      @db.VarChar(255)
   created_at DateTime?   @default(now()) @db.Timestamp(6)
-  userDramas UserDrama[]
+  userDrama  UserDrama[]
 
   @@map("users")
 }
@@ -38,6 +38,7 @@ model UserDrama {
   isFavorite Boolean  @default(false)
   isDropped  Boolean  @default(false)
   isWatching Boolean  @default(false)
+  isWatched  Boolean  @default(false)
   rating     Int?
   createdAt  DateTime @default(now())
 

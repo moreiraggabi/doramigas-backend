@@ -98,3 +98,28 @@ export const editUser = async (
 
   return result;
 };
+
+export const listUsers = async () => {
+  const result = prisma.user.findMany({
+    select: { name: true, email: true, created_at: true },
+  });
+
+  return result;
+};
+
+export const listUserById = async (id: number) => {
+  const result = prisma.user.findUnique({
+    where: { id },
+    select: { name: true, email: true, created_at: true },
+  });
+
+  return result;
+};
+
+export const deleteUser = async (id: number) => {
+  const result = prisma.user.delete({
+    where: { id },
+  });
+
+  return result;
+};

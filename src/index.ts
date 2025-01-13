@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import userRoutes from './modules/user/user.routes';
 import dramaRoutes from './modules/drama/dramas.routes';
+import userDramaRoutes from './modules/userDrama/userDrama.routes';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 // Usar as rotas de usuários
 app.use('/api/users', userRoutes);
 app.use('/api/dramas', dramaRoutes);
+app.use('/api/userDrama', userDramaRoutes)
 
 const PORT = 3000;
 app.listen(PORT, () => {
