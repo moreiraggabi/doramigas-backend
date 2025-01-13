@@ -1,9 +1,17 @@
 import { Request, Response } from 'express';
-import { createUser, editUser, loginUser } from './user.service';
+import {
+  createUser,
+  deleteUser,
+  editUser,
+  listUserById,
+  listUsers,
+  loginUser,
+} from './user.service';
 import {
   IncorrectPasswordException,
   UserNotFoundException,
 } from './user.excepetions';
+import { errorMessages } from '../../utils/errorMessages';
 
 // Lógica para registrar uma usuária
 export const createUserHandler = async (req: Request, res: Response) => {
@@ -29,7 +37,7 @@ export const loginUserHandler = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const token = loginUser(email, password);
+    const token = await loginUser(email, password);
 
     return res.status(200).json({ token });
   } catch (err) {
@@ -63,5 +71,64 @@ export const editUserHandler = async (req: Request, res: Response) => {
     } else {
       res.status(500).json({ error: 'Erro ao editar usuário' });
     }
+  }
+};
+
+export const listUsersHandler = async (req: Request, res: Response) => {
+  try {
+    const result = await listUsers();
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ocorreu um erro ao listar os usuários' });
+  }
+};
+
+export const listUserByIdHandler = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: errorMessages.idRequired });
+  }
+
+  try {
+    const result = await listUserById(+id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ error: 'Não foi econtrado nenhum usuário com o id informado' });
+    }
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({ error: 'Ocorreu um erro ao pesquisar o usuário' });
+  }
+};
+
+export const deleteUserHandler = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: errorMessages.idRequired });
+  }
+
+  try {
+    const result = await deleteUser(+id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({
+          error: 'Não foi encontrado nenhum usuário com o id informado',
+        });
+    }
+
+    return res.status(200).json({ result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ocorreu um erro ao deletar o usuário' });
   }
 };

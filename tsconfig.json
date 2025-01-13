@@ -6,7 +6,7 @@
     "outDir": "dist", // Diretório onde os arquivos compilados serão gerados
     "strict": true, // Ativar verificações estritas de tipo
     "esModuleInterop": true, // Compatibilidade com importações do CommonJS
-    "skipLibCheck": true // Ignorar verificação de bibliotecas
+    "skipLibCheck": true, 
   },
   "include": [
     "src"

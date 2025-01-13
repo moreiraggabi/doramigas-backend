@@ -7,20 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model dramas {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(255)
+model Drama {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(255)
   synopsis    String?
-  genre       String?   @db.VarChar(100)
-  nationality String?   @db.VarChar(50)
-  platform    String?   @db.VarChar(100)
-  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  genre       String?     @db.VarChar(100)
+  nationality String?     @db.VarChar(50)
+  platform    String?     @db.VarChar(100)
+  created_at  DateTime?   @default(now()) @db.Timestamp(6)
+  userDrama   UserDrama[]
+
+  @@map("dramas")
 }
 
-model users {
-  id         Int       @id @default(autoincrement())
-  name       String    @db.VarChar(100)
-  email      String    @unique @db.VarChar(150)
-  password   String    @db.VarChar(255)
-  created_at DateTime? @default(now()) @db.Timestamp(6)
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(100)
+  email      String      @unique @db.VarChar(150)
+  password   String      @db.VarChar(255)
+  created_at DateTime?   @default(now()) @db.Timestamp(6)
+  userDrama  UserDrama[]
+
+  @@map("users")
+}
+
+model UserDrama {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  dramaId    Int
+  isFavorite Boolean  @default(false)
+  isDropped  Boolean  @default(false)
+  isWatching Boolean  @default(false)
+  isWatched  Boolean  @default(false)
+  rating     Int?
+  createdAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drama Drama @relation(fields: [dramaId], references: [id], onDelete: Cascade)
+
+  @@map("user_drama")
 }

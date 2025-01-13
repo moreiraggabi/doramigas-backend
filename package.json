@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --inspect --transpile-only src/index.ts",
     "lint": "eslint './src/**/*.{js,ts}' --no-cache",
     "lint:fix": "eslint './src/**/*.{js,ts}' --fix --no-cache"
   },
