@@ -9,7 +9,7 @@ import {
 import { errorMessages } from '../../utils/errorMessages';
 
 export const createDramaHandler = async (req: Request, res: Response) => {
-  const { name, synopsis, genre, nationality, platform } = req.body;
+  const { name, synopsis, nationality, platform } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: 'O nome do dorama é obrigatório' });
@@ -19,7 +19,6 @@ export const createDramaHandler = async (req: Request, res: Response) => {
     const result = await createDrama({
       name,
       synopsis,
-      genre,
       nationality,
       platform,
     });
@@ -67,7 +66,7 @@ export const getDramaByIdHandler = async (req: Request, res: Response) => {
 
 export const editDramaHandler = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, synopsis, genre, nationality, platform } = req.body;
+  const { name, synopsis, nationality, platform } = req.body;
 
   if (!id) {
     res.status(400).json({ error: errorMessages.idRequired });
@@ -77,7 +76,6 @@ export const editDramaHandler = async (req: Request, res: Response) => {
     const updatedDrama = await editDrama(+id, {
       name,
       synopsis,
-      genre,
       nationality,
       platform,
     });

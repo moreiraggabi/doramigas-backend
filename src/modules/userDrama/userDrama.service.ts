@@ -182,7 +182,7 @@ export const listFavoriteDramasByUser = async (userId: number) => {
   return userFavoriteDramas;
 };
 
-export const listWatchedDramasByUser = async (userId: number) => {  
+export const listWatchedDramasByUser = async (userId: number) => {
   const dramasIdsRaw = await prisma.userDrama.findMany({
     select: { dramaId: true },
     where: { userId, isWatched: true },
@@ -240,9 +240,7 @@ export const getFilteredDramasByUser = async (filters: FilterOptions) => {
     where: { id: { in: dramasIds } },
     include: {
       userDrama: {
-        where: {
-          userId,
-        },
+        where: { userId },
         select: {
           isFavorite: true,
           isDropped: true,
@@ -251,8 +249,33 @@ export const getFilteredDramasByUser = async (filters: FilterOptions) => {
           rating: true,
         },
       },
+      genreDrama: {
+        select: {
+          genre: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 
-  return filteredDramas;
+  const transformedFilteredDramas = filteredDramas.map((drama) => {
+    const userDrama = drama.userDrama[0] || {};
+    const genres = drama.genreDrama.map((gd) => gd.genre.name);
+
+    return {
+      id: drama.id,
+      name: drama.name,
+      isFavorite: userDrama.isFavorite || false,
+      isDropped: userDrama.isDropped || false,
+      isWatching: userDrama.isWatching || false,
+      isWatched: userDrama.isWatched || false,
+      rating: userDrama.rating || null,
+      genres,
+    };
+  });
+
+  return transformedFilteredDramas;
 };

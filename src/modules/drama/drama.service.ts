@@ -4,7 +4,6 @@ import { CreateDramaParams } from './drama.interface';
 export const createDrama = async ({
   name,
   synopsis,
-  genre,
   nationality,
   platform,
 }: CreateDramaParams) => {
@@ -12,7 +11,6 @@ export const createDrama = async ({
     data: {
       name,
       synopsis,
-      genre,
       nationality,
       platform,
     },
@@ -22,9 +20,34 @@ export const createDrama = async ({
 };
 
 export const listDramas = async () => {
-  const result = await prisma.drama.findMany();
+  const result = await prisma.drama.findMany({
+    include: {
+      genreDrama: {
+        select: {
+          genre: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-  return result;
+  const transformedResult = result.map((drama) => {
+    const genres = drama.genreDrama.map((gd) => gd.genre.name);
+
+    return {
+      id: drama.id,
+      name: drama.name,
+      synopsis: drama.synopsis,
+      genres,
+      nationality: drama.nationality,
+      platform: drama.platform,
+    };
+  });
+
+  return transformedResult;
 };
 
 export const getDramasById = async (id: number) => {
@@ -37,14 +60,13 @@ export const getDramasById = async (id: number) => {
 
 export const editDrama = async (
   id: number,
-  { name, synopsis, genre, nationality, platform }: Partial<CreateDramaParams>,
+  { name, synopsis, nationality, platform }: Partial<CreateDramaParams>,
 ) => {
   const result = await prisma.drama.update({
     where: { id },
     data: {
       name,
       synopsis,
-      genre,
       nationality,
       platform,
     },
