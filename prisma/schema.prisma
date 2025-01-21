@@ -11,7 +11,6 @@ model Drama {
   id          Int          @id @default(autoincrement())
   name        String       @db.VarChar(255)
   synopsis    String?
-  genre       String?      @db.VarChar(100)
   nationality String?      @db.VarChar(50)
   platform    String?      @db.VarChar(100)
   created_at  DateTime?    @default(now()) @db.Timestamp(6)
