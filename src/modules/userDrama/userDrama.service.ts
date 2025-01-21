@@ -1,4 +1,5 @@
 import prisma from '../../prisma';
+import { FilterOptions } from './userDrama.interface';
 
 export const toggleFavoriteDrama = async (userId: number, dramaId: number) => {
   const existingRecord = await prisma.userDrama.findFirst({
@@ -181,7 +182,7 @@ export const listFavoriteDramasByUser = async (userId: number) => {
   return userFavoriteDramas;
 };
 
-export const listWatchedDramasByUser = async (userId: number) => {
+export const listWatchedDramasByUser = async (userId: number) => {  
   const dramasIdsRaw = await prisma.userDrama.findMany({
     select: { dramaId: true },
     where: { userId, isWatched: true },
@@ -209,4 +210,49 @@ export const listDroppedDramasByUser = async (userId: number) => {
   });
 
   return userDroppedDramas;
+};
+
+export const getFilteredDramasByUser = async (filters: FilterOptions) => {
+  const { userId } = filters;
+
+  const validFiltersArray = Object.entries(filters)
+    .filter(
+      ([key, value]) =>
+        value !== undefined && value !== null && key !== 'userId',
+    )
+    .map(([key, value]) => ({ [key]: value }));
+
+  const dramasIdsRaw = await prisma.userDrama.findMany({
+    select: { dramaId: true },
+    where: {
+      AND: [
+        { userId },
+        {
+          OR: validFiltersArray,
+        },
+      ],
+    },
+  });
+
+  const dramasIds = dramasIdsRaw.map((record) => record.dramaId);
+
+  const filteredDramas = await prisma.drama.findMany({
+    where: { id: { in: dramasIds } },
+    include: {
+      userDrama: {
+        where: {
+          userId,
+        },
+        select: {
+          isFavorite: true,
+          isDropped: true,
+          isWatching: true,
+          isWatched: true,
+          rating: true,
+        },
+      },
+    },
+  });
+
+  return filteredDramas;
 };

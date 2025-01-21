@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  filterDramasHandler,
   listDramasByUserHandler,
   listDroppedDramasByUserHandler,
   listFavoriteDramasByUserHandler,
@@ -27,5 +28,6 @@ router.get('/', authenticateToken, listDramasByUserHandler);
 router.get('/favorites', authenticateToken, listFavoriteDramasByUserHandler);
 router.get('/watched', authenticateToken, listWatchedDramasByUserHandler);
 router.get('/dropped', authenticateToken, listDroppedDramasByUserHandler);
+router.get('/filter', authenticateToken, filterDramasHandler);
 
 export default router;

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import {
+  getFilteredDramasByUser,
   listDramasByUser,
   listDroppedDramasByUser,
   listFavoriteDramasByUser,
@@ -234,5 +235,50 @@ export const listDroppedDramasByUserHandler = async (
     res
       .status(500)
       .json({ error: 'Ocorreu um erro ao buscar os doramas dropados' });
+  }
+};
+
+export const filterDramasHandler = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Usuário não autenticado' });
+  }
+
+  // Parâmetros de filtro da query string
+  const {
+    isFavorite,
+    isDropped,
+    isWatching,
+    isWatched,
+    // hasRating,
+    genres,
+    nationalities,
+  } = req.body;
+
+  try {
+    const dramas = await getFilteredDramasByUser({
+      userId,
+      isFavorite: isFavorite,
+      isDropped: isDropped,
+      isWatching: isWatching,
+      isWatched: isWatched,
+      // hasRating: hasRating,
+      genres: genres
+        ? Array.isArray(genres)
+          ? (genres as string[])
+          : [genres as string]
+        : undefined,
+      nationalities: nationalities
+        ? Array.isArray(nationalities)
+          ? (nationalities as string[])
+          : [nationalities as string]
+        : undefined,
+    });
+
+    res.status(200).json(dramas);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao filtrar os doramas.' });
   }
 };
