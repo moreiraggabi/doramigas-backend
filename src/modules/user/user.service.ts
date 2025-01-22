@@ -1,7 +1,7 @@
 import {
   IncorrectPasswordException,
   UserNotFoundException,
-} from './user.excepetions';
+} from './user.exceptions';
 import { encriptPassword } from './users.helper';
 import { CreateUserParams } from './users.interface';
 import bcrypt from 'bcrypt';
@@ -122,4 +122,39 @@ export const deleteUser = async (id: number) => {
   });
 
   return result;
+};
+
+export const userProfile = async (id: number) => {
+  const result = await prisma.user.findUnique({
+    where: { id },
+    include: {
+      userDrama: true,
+    },
+  });
+
+  if (!result) {
+    throw new UserNotFoundException(
+      'Não foram encontrados nenhum resultado de doramas para este id de usuário',
+    );
+  }
+
+  const favoriteCount = result.userDrama.filter(
+    (item) => item.isFavorite,
+  ).length;
+  const droppedCount = result.userDrama.filter((item) => item.isDropped).length;
+  const watchingCount = result.userDrama.filter(
+    (item) => item.isWatching,
+  ).length;
+  const watchedCount = result.userDrama.filter((item) => item.isWatched).length;
+
+  return {
+    name: result.name,
+    email: result.email,
+    statistics: {
+      favoriteCount,
+      droppedCount,
+      watchingCount,
+      watchedCount,
+    },
+  };
 };

@@ -6,11 +6,12 @@ import {
   listUserById,
   listUsers,
   loginUser,
+  userProfile,
 } from './user.service';
 import {
   IncorrectPasswordException,
   UserNotFoundException,
-} from './user.excepetions';
+} from './user.exceptions';
 import { errorMessages } from '../../utils/errorMessages';
 
 // Lógica para registrar uma usuária
@@ -119,16 +120,56 @@ export const deleteUserHandler = async (req: Request, res: Response) => {
     const result = await deleteUser(+id);
 
     if (!result) {
-      return res
-        .status(404)
-        .json({
-          error: 'Não foi encontrado nenhum usuário com o id informado',
-        });
+      return res.status(404).json({
+        error: 'Não foi encontrado nenhum usuário com o id informado',
+      });
     }
 
     return res.status(200).json({ result });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Ocorreu um erro ao deletar o usuário' });
+  }
+};
+
+export const userProfileByIdHandler = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ errors: errorMessages.userIdRequired });
+  }
+
+  try {
+    const result = await userProfile(+userId);
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    if (err instanceof UserNotFoundException) {
+      return res.status(500).json(err.message);
+    } else {
+      return res.status(500).json('Ocorreu um erro ao buscar perfil de usuário');
+    }
+  }
+};
+
+export const authenticatedUserProfileHandler = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(400).json({ errors: errorMessages.userIdRequired });
+  }
+
+  try {
+    const result = await userProfile(+userId);
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    if (err instanceof UserNotFoundException) {
+      res.status(500).json(err.message);
+    } else {
+      res.status(500).json('Ocorreu um erro ao buscar perfil de usuário');
+    }
   }
 };
